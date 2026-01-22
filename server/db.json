@@ -1,0 +1,36 @@
+{
+  "consultations": [
+    {
+      "id": "1768671415559",
+      "timestamp": "2026-01-17T17:36:55.563Z",
+      "summary": "Headache consultation test",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I have a headache."
+        },
+        {
+          "role": "assistant",
+          "content": "I understand. Is it throbbing?"
+        }
+      ],
+      "remedy": "Nux Vomica"
+    },
+    {
+      "id": "1768671482974",
+      "timestamp": "2026-01-17T17:38:02.974Z",
+      "summary": "Headache consultation test",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I have a headache."
+        },
+        {
+          "role": "assistant",
+          "content": "I understand. Is it throbbing?"
+        }
+      ],
+      "remedy": "Nux Vomica"
+    }
+  ]
+}
