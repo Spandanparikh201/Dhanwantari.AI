@@ -3,23 +3,23 @@ import { Heart } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer className="relative z-10 mt-auto border-t border-phosphor/10 bg-phosphor-bg/80 backdrop-blur-sm">
+        <footer className="relative z-10 mt-auto bg-blue-950 text-white border-t border-blue-900">
             <div className="container mx-auto px-4 py-8">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 text-phosphor/60 text-sm">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-2 text-blue-200/80 text-sm font-body">
                         <span>Made with</span>
-                        <Heart size={14} className="text-phosphor fill-phosphor" />
+                        <Heart size={14} className="text-red-400 fill-red-400 animate-pulse" />
                         <span>for Homeopathy</span>
                     </div>
 
-                    <div className="text-emerald-600/60 text-xs font-mono">
+                    <div className="text-blue-300/60 text-xs font-mono tracking-widest uppercase">
                         DHANWANTARI © 2026 • AI-Powered Homeopathy Assistant
                     </div>
 
-                    <div className="flex gap-4 text-xs text-phosphor/60">
-                        <a href="#" className="hover:text-phosphor transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-phosphor transition-colors">Terms</a>
-                        <a href="#" className="hover:text-phosphor transition-colors">About</a>
+                    <div className="flex gap-6 text-sm text-blue-200/80 font-body">
+                        <a href="#" className="hover:text-white transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-white transition-colors">Terms</a>
+                        <a href="#" className="hover:text-white transition-colors">About</a>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { Send, Hash, Terminal, Paperclip, X, FileText, Image as ImageIcon } from
 import axios from 'axios';
 import { useChat } from '../../hooks/useChat';
 import { BiofeedbackAnimation } from '../ui/BiofeedbackAnimation';
+import { FloatingShapes } from '../ui/FloatingShapes';
 
 export const ChatInterface = () => {
     const { messages, loading, error, sendMessage, prescription } = useChat();
@@ -78,9 +79,10 @@ export const ChatInterface = () => {
     }, []);
 
     return (
-        <div className="w-full h-[80vh] flex gap-8 font-body max-w-6xl mx-auto">
+        <div className="w-full h-[80vh] flex gap-8 font-body max-w-6xl mx-auto relative">
+            <FloatingShapes />
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col relative modern-card overflow-hidden">
+            <div className="flex-1 flex flex-col relative modern-card overflow-hidden z-10 glass-panel">
                 {/* Header Bar */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
                     <div className="flex items-center gap-3">

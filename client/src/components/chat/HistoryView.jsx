@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Card } from '../ui/Card';
 import { Calendar, Clock, ArrowRight, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { FloatingShapes } from '../ui/FloatingShapes';
 
 export const HistoryView = () => {
     const [history, setHistory] = useState([]);
@@ -32,19 +33,20 @@ export const HistoryView = () => {
     ];
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 font-mono">
-            <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
-                <h2 className="text-3xl font-display font-medium text-phosphor tracking-widest">ARCHIVES & LIBRARY</h2>
-                <div className="flex gap-2 p-1 terminal-box rounded-lg">
+        <div className="w-full max-w-6xl mx-auto px-4 font-body relative">
+            <FloatingShapes />
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4 relative z-10">
+                <h2 className="text-3xl font-display font-bold text-gray-900 tracking-tight">ARCHIVES & LIBRARY</h2>
+                <div className="flex gap-2 p-1 bg-white border border-gray-200 rounded-xl shadow-sm">
                     <button
                         onClick={() => setActiveTab('active')}
-                        className={`px-4 py-2 rounded-md text-sm transition-colors ${activeTab === 'active' ? 'bg-phosphor/20 text-phosphor font-bold' : 'text-phosphor/50 hover:text-phosphor'}`}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'active' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50'}`}
                     >
                         CONSULTATIONS
                     </button>
                     <button
                         onClick={() => setActiveTab('library')}
-                        className={`px-4 py-2 rounded-md text-sm transition-colors ${activeTab === 'library' ? 'bg-phosphor/20 text-phosphor font-bold' : 'text-phosphor/50 hover:text-phosphor'}`}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'library' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50'}`}
                     >
                         LIBRARY
                     </button>
@@ -52,16 +54,17 @@ export const HistoryView = () => {
             </div>
 
             {activeTab === 'active' ? (
-                <div className="space-y-6">
-                    <h2 className="text-xl text-phosphor tracking-widest border-b border-phosphor/30 pb-4">
-                        CONSULTATION_LOGS
+                <div className="space-y-6 relative z-10">
+                    <h2 className="text-sm font-bold text-gray-400 tracking-wider uppercase border-b border-gray-200 pb-2">
+                        Recent Consultations
                     </h2>
 
                     {loading ? (
-                        <div className="text-phosphor/50 animate-pulse">LOADING_ARCHIVES...</div>
+                        <div className="text-blue-500 animate-pulse font-medium">Loading archives...</div>
                     ) : history.length === 0 ? (
-                        <div className="terminal-box p-8 text-center text-phosphor/50">
-                            NO_RECORDS_FOUND
+                        <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center text-gray-400 shadow-sm">
+                            <div className="mb-4 text-6xl">📭</div>
+                            No consultation records found.
                         </div>
                     ) : (
                         <div className="grid gap-4">
@@ -70,25 +73,30 @@ export const HistoryView = () => {
                                     key={record.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="terminal-box p-6 hover:bg-phosphor/5 transition-colors group cursor-pointer"
+                                    className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg hover:border-blue-300 transition-all group cursor-pointer"
                                 >
                                     <div className="flex justify-between items-start mb-4">
-                                        <span className="text-xs text-phosphor/40 font-mono">
+                                        <span className="text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
                                             ID: {record.id.substring(0, 8)}
                                         </span>
-                                        <span className="text-xs text-phosphor/40">
-                                            {new Date(record.timestamp).toLocaleString()}
+                                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                                            <Calendar size={12} />
+                                            {new Date(record.timestamp).toLocaleDateString()}
+                                            <Clock size={12} className="ml-2" />
+                                            {new Date(record.timestamp).toLocaleTimeString()}
                                         </span>
                                     </div>
 
                                     <div className="flex items-start gap-4">
-                                        <FileText className="text-phosphor opacity-50" size={24} />
+                                        <div className="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <FileText size={24} />
+                                        </div>
                                         <div>
-                                            <h3 className="text-lg text-phosphor mb-2 group-hover:text-white transition-colors">
-                                                {record.remedy || 'Evaluation Pending'}
+                                            <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                                                {record.remedy || 'Analysis In Progress'}
                                             </h3>
-                                            <p className="text-sm text-phosphor/70 line-clamp-2 font-mono">
-                                                {record.summary || 'Click to view full transcript...'}
+                                            <p className="text-sm text-gray-600 line-clamp-2">
+                                                {record.summary || 'Click to view full transcript and AI analysis details...'}
                                             </p>
                                         </div>
                                     </div>
@@ -98,7 +106,7 @@ export const HistoryView = () => {
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                     {resources.map((res, idx) => (
                         <motion.a
                             key={idx}
@@ -110,15 +118,19 @@ export const HistoryView = () => {
                             transition={{ delay: idx * 0.1 }}
                             className="block"
                         >
-                            <div className="terminal-box p-6 hover:bg-phosphor/5 transition-colors h-full group cursor-pointer">
-                                <div className="flex items-start justify-between mb-4">
-                                    <span className={`text-xs px-2 py-1 rounded border font-mono ${res.type === 'PDF' ? 'border-red-500/30 text-red-400 bg-red-500/10' : 'border-blue-500/30 text-blue-400 bg-blue-500/10'}`}>
+                            <div className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg hover:border-blue-300 transition-all h-full group cursor-pointer relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                                <div className="flex items-start justify-between mb-4 relative">
+                                    <span className={`text-xs px-2.5 py-1 rounded-full font-bold tracking-wide ${res.type === 'PDF' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
                                         {res.type}
                                     </span>
-                                    <ArrowRight size={18} className="text-phosphor/50 group-hover:text-phosphor transition-colors -rotate-45 group-hover:rotate-0 transform duration-300" />
+                                    <div className="p-2 bg-gray-50 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors text-gray-400">
+                                        <ArrowRight size={16} className="-rotate-45 group-hover:rotate-0 transform duration-300" />
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-display font-medium text-phosphor mb-2">{res.title}</h3>
-                                <p className="text-phosphor/60 text-sm leading-relaxed font-mono">{res.desc}</p>
+                                <h3 className="text-xl font-display font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{res.title}</h3>
+                                <p className="text-gray-500 text-sm leading-relaxed">{res.desc}</p>
                             </div>
                         </motion.a>
                     ))}

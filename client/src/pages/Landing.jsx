@@ -14,79 +14,84 @@ const Landing = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col items-center space-y-12 md:space-y-20 w-full px-4"
+            className="flex flex-col items-center space-y-16 md:space-y-24 w-full px-4 py-12"
         >
             {/* Hero Section */}
-            <section className="text-center space-y-6 md:space-y-8 max-w-4xl relative mx-auto">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-accent/5 blur-[100px] rounded-full -z-10" />
+            <section className="text-center space-y-8 max-w-5xl relative mx-auto">
 
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-sm text-accent text-xs md:text-sm font-medium tracking-wide mb-4">
-                    <Sparkles size={14} />
+                {/* AI Badge - Purple */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 border border-purple-200 text-purple-600 text-sm font-medium tracking-wide">
+                    <Sparkles size={16} />
                     <span>AI-Powered Homeopathy Engine</span>
                 </div>
 
-                <h1 className="text-center text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter text-blue-900 drop-shadow-sm leading-tight py-2 w-full">
+                {/* Large Hero Text - Blue */}
+                <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter leading-none py-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
                     DHANWANTARI
                 </h1>
 
-                <div className="flex flex-col gap-4 text-center items-center justify-center max-w-2xl mx-auto px-4">
-                    <p className="text-lg md:text-xl text-secondary-dim/90 font-body leading-relaxed">
-                        An advanced AI simulating the logic of a classical homeopath.
-                    </p>
+                {/* Subtitle */}
+                <p className="text-lg md:text-xl text-gray-600 font-body leading-relaxed max-w-2xl mx-auto">
+                    An advanced AI simulating the logic of a classical homeopath.
+                </p>
 
-                    {/* System Info Pills */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-4">
-                        <div className="glass-panel p-3 rounded-xl border border-white/5 flex flex-col items-center gap-2">
-                            <div className="p-2 rounded-full bg-accent/10 text-accent"><Activity size={18} /></div>
-                            <h3 className="text-white font-medium text-sm">AI-Powered Analysis</h3>
-                            <p className="text-secondary-dim text-xs">Advanced symptom pattern recognition using Google Gemini AI.</p>
-                        </div>
-                        <div className="glass-panel p-3 rounded-xl border border-white/5 flex flex-col items-center gap-2">
-                            <div className="p-2 rounded-full bg-purple-500/10 text-purple-400"><Microscope size={18} /></div>
-                            <h3 className="text-white font-medium text-sm">Classical Methodology</h3>
-                            <p className="text-secondary-dim text-xs">Follows traditional homeopathic principles & case-taking protocols.</p>
-                        </div>
-                        <div className="glass-panel p-3 rounded-xl border border-white/5 flex flex-col items-center gap-2">
-                            <div className="p-2 rounded-full bg-emerald-500/10 text-emerald-400"><ShieldCheck size={18} /></div>
-                            <h3 className="text-white font-medium text-sm">Educational Focus</h3>
-                            <p className="text-secondary-dim text-xs">Learn homeopathy safely with AI guidance & instant feedback.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 pt-4 md:pt-8 w-full sm:w-auto">
+                {/* CTA Button */}
+                <div className="pt-4">
                     <Button
-                        variant="solid"
-                        className="w-full sm:w-auto text-lg px-8 py-4 md:py-5"
-                        onClick={() => navigate('/consultation')}
+                        onClick={() => navigate('/register')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg shadow-blue-600/20 inline-flex items-center gap-2"
                     >
-                        Start Consultation <ArrowRight size={20} />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        className="w-full sm:w-auto text-lg px-8 py-4 md:py-5"
-                        onClick={() => navigate('/history')}
-                    >
-                        Archives
+                        Get Started
+                        <ArrowRight size={20} />
                     </Button>
                 </div>
             </section>
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl px-4">
-                <Card title="Intelligent Consultation" className="border-accent/20">
-                    <div className="flex items-center gap-4 text-accent mb-4"><Activity size={28} /></div>
-                    <p className="text-secondary-dim text-lg leading-relaxed">AI-guided case taking that adapts to your symptoms and asks relevant follow-up questions.</p>
+            {/* Feature Cards */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mx-auto">
+                {/* Card 1 - Purple Icon */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-4">
+                        <Activity className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <h3 className="text-gray-900 font-semibold text-lg mb-2">Advanced symptom pattern recognition using Google Gemini AI.</h3>
+                    <p className="text-gray-600 text-sm">Follows traditional homeopathic principles & case-taking protocols.</p>
+                </div>
+
+                {/* Card 2 - Pink Icon */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center mb-4">
+                        <Microscope className="w-6 h-6 text-pink-600" />
+                    </div>
+                    <h3 className="text-gray-900 font-semibold text-lg mb-2">Follows traditional homeopathic principles & case-taking protocols.</h3>
+                    <p className="text-gray-600 text-sm">Get tailored homeopathic remedy suggestions based on classical principles.</p>
+                </div>
+
+                {/* Card 3 - Cyan Icon */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center mb-4">
+                        <ShieldCheck className="w-6 h-6 text-cyan-600" />
+                    </div>
+                    <h3 className="text-gray-900 font-semibold text-lg mb-2">Learn homeopathy safely with AI guidance & instant feedback.</h3>
+                    <p className="text-gray-600 text-sm">Educational tool with built-in disclaimers and responsible guidance.</p>
+                </div>
+            </section>
+
+            {/* Additional Features */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl px-4">
+                <Card title="Intelligent Consultation" className="border-blue-200">
+                    <div className="flex items-center gap-4 text-blue-600 mb-4"><Activity size={28} /></div>
+                    <p className="text-gray-600 text-lg leading-relaxed">AI-guided case taking that adapts to your symptoms and asks relevant follow-up questions.</p>
                 </Card>
                 <Card title="Personalized Remedies">
-                    <div className="flex items-center gap-4 text-purple-400 mb-4"><Microscope size={28} /></div>
-                    <p className="text-secondary-dim text-lg leading-relaxed">Get tailored homeopathic remedy suggestions based on classical principles and AI analysis.</p>
+                    <div className="flex items-center gap-4 text-purple-600 mb-4"><Microscope size={28} /></div>
+                    <p className="text-gray-600 text-lg leading-relaxed">Get tailored homeopathic remedy suggestions based on classical principles and AI analysis.</p>
                 </Card>
                 <Card title="Safe Learning">
-                    <div className="flex items-center gap-4 text-emerald-400 mb-4"><ShieldCheck size={28} /></div>
-                    <p className="text-secondary-dim text-lg leading-relaxed">Educational tool with built-in disclaimers and guidance for responsible homeopathy exploration.</p>
+                    <div className="flex items-center gap-4 text-cyan-600 mb-4"><ShieldCheck size={28} /></div>
+                    <p className="text-gray-600 text-lg leading-relaxed">Educational tool with built-in disclaimers and guidance for responsible homeopathy exploration.</p>
                 </Card>
-            </div>
+            </section>
         </motion.div>
     );
 };

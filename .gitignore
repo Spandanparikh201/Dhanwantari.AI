@@ -55,3 +55,4 @@ coverage/
 
 # Brain artifacts (development documentation)
 .gemini/
+.agent/

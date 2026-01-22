@@ -56,14 +56,14 @@ const Navbar = () => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
             <div className="max-w-7xl mx-auto">
-                <div className="rounded-2xl px-6 py-4 flex items-center justify-between bg-blue-900 shadow-lg border-2 border-white">
+                <div className="rounded-2xl px-6 py-4 flex items-center justify-between bg-bg-surface/60 backdrop-blur-md shadow-2xl border border-white/5">
 
                     {/* Logo */}
-                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleNav('/')}>
-                        <div className="w-10 h-10 rounded-lg bg-blue-300 flex items-center justify-center">
-                            <span className="font-display font-bold text-xl text-blue-900">D</span>
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => handleNav('/')}>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all">
+                            <span className="font-display font-bold text-xl text-white">D</span>
                         </div>
-                        <span className="font-display font-bold text-lg tracking-wide hidden md:block text-white">
+                        <span className="font-display font-bold text-lg tracking-wide hidden md:block text-slate-100 group-hover:text-white transition-colors">
                             DHANWANTARI
                         </span>
                     </div>
@@ -74,8 +74,8 @@ const Navbar = () => {
                             <button
                                 key={link.name}
                                 onClick={() => handleNav(link.path)}
-                                className={`flex items-center gap-2 text-sm font-medium transition-colors duration-300
-                  ${location.pathname === link.path ? 'text-blue-300' : 'text-white/80 hover:text-white'}`}
+                                className={`flex items-center gap-2 text-sm font-medium transition-colors duration-300 uppercase tracking-widest
+                  ${location.pathname === link.path ? 'text-accent drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' : 'text-slate-400 hover:text-white'}`}
                             >
                                 {link.icon}
                                 {link.name}
