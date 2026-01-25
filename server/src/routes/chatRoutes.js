@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const chatController = require('../controllers/chatController');
-
 const { authenticateToken } = require('../middleware/auth');
 
+// POST /api/chat - Chat with AI
 router.post('/', authenticateToken, chatController.chat);
 
 module.exports = router;

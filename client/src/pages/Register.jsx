@@ -44,7 +44,8 @@ const Register = () => {
                     window.refreshNavbar();
                 }
 
-                navigate('/consultation');
+                // Navigate to patient profile with reload
+                window.location.href = '/profile';
             } else {
                 alert(data.error || 'Registration failed');
             }

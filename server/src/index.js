@@ -66,13 +66,17 @@ const historyRoutes = require('./routes/historyRoutes');
 const authRoutes = require('./routes/authRoutes');
 const prescriptionRoutes = require('./routes/prescriptionRoutes');
 const patientRoutes = require('./routes/patientRoutes');
+const doctorRoutes = require('./routes/doctorRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Apply specific rate limiters
 app.use('/api/chat', aiLimiter, chatRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/patient', patientRoutes);
+app.use('/api/doctor', doctorRoutes);
 app.use('/api/prescription', prescriptionRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Global error handler (must be last)
 const errorHandler = require('./middleware/errorHandler');

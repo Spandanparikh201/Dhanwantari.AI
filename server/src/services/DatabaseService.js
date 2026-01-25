@@ -71,10 +71,10 @@ class DatabaseService {
 
         try {
             const [result] = await this.pool.execute(
-                'INSERT INTO users (id, name, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)',
-                [id, user.name, user.email, user.password, user.role || 'patient', user.status || 'active']
+                'INSERT INTO users (id, email, password_hash, role, status) VALUES (?, ?, ?, ?, ?)',
+                [id, user.email, user.password, user.role || 'patient', user.status || 'active']
             );
-            return { id, ...user };
+            return { id, name: user.name, ...user };
         } catch (error) {
             console.error("Create User Error:", error);
             throw error;
@@ -120,21 +120,25 @@ class DatabaseService {
     async createPatientProfile(userId, profileData) {
         await this.initPromise;
         try {
+            // Name should come from registration data (profileData) or be passed explicitly
+            const fullName = profileData.fullName || profileData.name || 'Unknown';
+
             const [result] = await this.pool.execute(
                 `INSERT INTO patient_profiles 
-                (user_id, date_of_birth, gender, blood_group, height, weight, allergies, 
+                (user_id, full_name, date_of_birth, gender, blood_group, height_cm, weight_kg, allergies, 
                 chronic_conditions, current_medications, emergency_contact_name, emergency_contact_phone) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     userId,
+                    fullName,
                     profileData.dateOfBirth || null,
                     profileData.gender || null,
                     profileData.bloodGroup || null,
                     profileData.height || null,
                     profileData.weight || null,
-                    profileData.allergies || null,
-                    profileData.chronicConditions || null,
-                    profileData.currentMedications || null,
+                    profileData.allergies ? JSON.stringify(profileData.allergies) : null,
+                    profileData.chronicConditions ? JSON.stringify(profileData.chronicConditions) : null,
+                    profileData.currentMedications ? JSON.stringify(profileData.currentMedications) : null,
                     profileData.emergencyContactName || null,
                     profileData.emergencyContactPhone || null
                 ]
@@ -199,13 +203,17 @@ class DatabaseService {
     async createDoctorProfile(userId, profileData) {
         await this.initPromise;
         try {
+            // Name should come from registration data (profileData) or be passed explicitly
+            const fullName = profileData.fullName || profileData.name || 'Unknown Doctor';
+
             const [result] = await this.pool.execute(
                 `INSERT INTO doctor_profiles 
-                (user_id, registration_number, qualification, specialization, experience_years, 
+                (user_id, full_name, registration_number, qualification, specialization, experience_years, 
                 clinic_address, consultation_fee, bio, verification_documents) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     userId,
+                    fullName,
                     profileData.registrationNumber,
                     profileData.qualification || null,
                     profileData.specialization || null,

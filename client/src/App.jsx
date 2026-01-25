@@ -9,6 +9,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PatientProfile from './components/profile/PatientProfile';
 import Dashboard from './pages/dashboard/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ResetPassword from './pages/ResetPassword';
 import { Button } from './components/ui/Button';
 
 function App() {
@@ -48,6 +52,10 @@ function App() {
             <Route path="/profile" element={<PatientProfile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </AnimatePresence>
       </div>

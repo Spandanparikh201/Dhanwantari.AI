@@ -18,44 +18,39 @@ export const useChat = () => {
         if (!content.trim()) return;
 
         const userMessage = { role: 'user', content };
+
+        // Optimistically update UI
         setMessages((prev) => [...prev, userMessage]);
         setLoading(true);
         setError(null);
 
         try {
-            // Use functional setState to access latest messages without dependency
-            setMessages((currentMessages) => {
-                const conversationHistory = [...currentMessages];
+            const token = localStorage.getItem('token');
+            const currentHistory = [...messages, userMessage];
 
-                axios.post(API_URL, {
-                    history: conversationHistory
-                })
-                    .then(response => {
-                        const { role, content, prescription: rx } = response.data;
-                        const assistantMessage = { role, content };
-
-                        setMessages((prev) => [...prev, assistantMessage]);
-                        if (rx) setPrescription(rx);
-
-                        setLoading(false);
-                    })
-                    .catch(err => {
-                        console.error("Chat Error:", err);
-                        const errorMsg = err.response?.data?.message || err.response?.data?.error?.message || "Unable to connect to Dhanwantari. Please ensure the server is running.";
-                        setError(errorMsg);
-                        setLoading(false);
-                    });
-
-                return currentMessages; // Return unchanged for this setState
+            const response = await axios.post(API_URL, {
+                history: currentHistory
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
+
+            const { role, content: assistantContent, prescription: rx } = response.data;
+            const assistantMessage = { role, content: assistantContent };
+
+            setMessages((prev) => [...prev, assistantMessage]);
+            if (rx) setPrescription(rx);
 
         } catch (err) {
             console.error("Chat Error:", err);
             const errorMsg = err.response?.data?.message || err.response?.data?.error?.message || "Unable to connect to Dhanwantari. Please ensure the server is running.";
             setError(errorMsg);
+        } finally {
             setLoading(false);
         }
-    }, []); // Empty dependency array - no unnecessary re-renders
+    }, [messages]); // Dependency on messages to construct history correctly
 
     return { messages, loading, error, sendMessage, prescription };
 };

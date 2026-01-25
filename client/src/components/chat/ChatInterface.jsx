@@ -5,14 +5,33 @@ import axios from 'axios';
 import { useChat } from '../../hooks/useChat';
 import { BiofeedbackAnimation } from '../ui/BiofeedbackAnimation';
 import { FloatingShapes } from '../ui/FloatingShapes';
+import DisclaimerModal from '../legal/DisclaimerModal';
 
 export const ChatInterface = () => {
     const { messages, loading, error, sendMessage, prescription } = useChat();
     const [input, setInput] = useState('');
     const [attachedFile, setAttachedFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
+    const [showDisclaimer, setShowDisclaimer] = useState(false);
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    // Check if user has accepted disclaimer
+    useEffect(() => {
+        const hasAcceptedDisclaimer = localStorage.getItem('disclaimerAccepted');
+        if (!hasAcceptedDisclaimer) {
+            setShowDisclaimer(true);
+        }
+    }, []);
+
+    const handleAcceptDisclaimer = () => {
+        localStorage.setItem('disclaimerAccepted', 'true');
+        setShowDisclaimer(false);
+    };
+
+    const handleDeclineDisclaimer = () => {
+        window.location.href = '/';
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -247,6 +266,13 @@ export const ChatInterface = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Disclaimer Modal */}
+            <DisclaimerModal
+                isOpen={showDisclaimer}
+                onAccept={handleAcceptDisclaimer}
+                onDecline={handleDeclineDisclaimer}
+            />
         </div>
     );
 };

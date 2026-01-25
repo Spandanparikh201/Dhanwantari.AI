@@ -30,6 +30,14 @@ const Navbar = () => {
         { name: 'Consultation', icon: <Activity size={16} />, path: '/consultation' },
     ];
 
+    // Add Dashboard link only for logged-in users
+    const userNavLinks = user ? [
+        { name: 'Home', icon: <Sparkles size={16} />, path: '/' },
+        { name: 'Dashboard', icon: <User size={16} />, path: user.role === 'admin' ? '/admin' : '/dashboard' },
+        { name: 'Archives', icon: <Layers size={16} />, path: '/history' },
+        { name: 'Consultation', icon: <Activity size={16} />, path: '/consultation' },
+    ] : navLinks;
+
     const handleNav = (path) => {
         navigate(path);
         setIsOpen(false);
@@ -63,19 +71,19 @@ const Navbar = () => {
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all">
                             <span className="font-display font-bold text-xl text-white">D</span>
                         </div>
-                        <span className="font-display font-bold text-lg tracking-wide hidden md:block text-slate-100 group-hover:text-white transition-colors">
+                        <span className="font-display font-bold text-lg tracking-wide hidden md:block text-gray-900 group-hover:text-blue-600 transition-colors">
                             DHANWANTARI
                         </span>
                     </div>
 
                     {/* Desktop Nav */}
                     <div className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
+                        {userNavLinks.map((link) => (
                             <button
                                 key={link.name}
                                 onClick={() => handleNav(link.path)}
                                 className={`flex items-center gap-2 text-sm font-medium transition-colors duration-300 uppercase tracking-widest
-                  ${location.pathname === link.path ? 'text-accent drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' : 'text-slate-400 hover:text-white'}`}
+                  ${location.pathname === link.path ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600'}`}
                             >
                                 {link.icon}
                                 {link.name}
@@ -87,12 +95,12 @@ const Navbar = () => {
                             <div className="relative">
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20 hover:bg-accent/20 transition-all"
+                                    className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/20 hover:bg-accent/20 transition-all"
                                 >
                                     <div className="w-8 h-8 rounded-full bg-accent/30 flex items-center justify-center text-accent font-bold text-sm">
                                         {getUserInitials(user.name)}
                                     </div>
-                                    <span className="text-white font-medium text-sm">{user.name}</span>
+                                    <span className="text-black font-medium text-sm group-hover:text-blue-600 transition-colors">{user.name}</span>
                                 </button>
 
                                 {/* User Dropdown Menu */}
@@ -158,7 +166,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="absolute top-20 left-4 right-4 bg-white rounded-2xl p-4 flex flex-col gap-4 md:hidden shadow-xl border border-gray-200"
                     >
-                        {navLinks.map((link) => (
+                        {userNavLinks.map((link) => (
                             <button
                                 key={link.name}
                                 onClick={() => handleNav(link.path)}

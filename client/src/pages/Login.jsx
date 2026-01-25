@@ -29,9 +29,17 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                // Navigate to home/consultation
-                navigate('/');
-                window.location.reload(); // Keep reload for now to ensuring navbar updates
+                // Role-based redirect
+                const userRole = data.user.role;
+
+                if (userRole === 'admin') {
+                    window.location.href = '/admin';
+                } else if (userRole === 'doctor') {
+                    window.location.href = '/dashboard';
+                } else {
+                    // Patient
+                    window.location.href = '/dashboard';
+                }
             } else {
                 alert(data.error || 'Login failed');
             }
