@@ -1,0 +1,100 @@
+symptom,disease,remedy,potency,grade
+"Headache; throbbing, pulsating","Migraine","Belladonna","30C",3
+"Headache; worse from light","Migraine","Belladonna","30C",3
+"Headache; worse from noise","Migraine","Belladonna","30C",2
+"Headache; sudden onset","Migraine","Belladonna","30C",3
+"Headache; right-sided","Migraine","Sanguinaria","30C",3
+"Headache; begins in occiput","Cervicogenic Headache","Gelsemium","30C",3
+"Headache; band-like sensation","Tension Headache","Gelsemium","30C",2
+"Headache; from mental exertion","Tension Headache","Kali Phos","6X",3
+"Headache; worse in morning","Sinusitis","Nux Vomica","30C",2
+"Headache; with nausea","Migraine","Iris Versicolor","30C",3
+"Fever; sudden onset, high","Acute Fever","Belladonna","30C",3
+"Fever; with chills","Intermittent Fever","Arsenicum Album","30C",3
+"Fever; with restlessness","Acute Fever","Aconitum","30C",3
+"Fever; after getting wet","Cold/Flu","Rhus Tox","30C",3
+"Fever; with body aches","Flu","Gelsemium","30C",3
+"Fever; thirstless during","Flu","Gelsemium","30C",2
+"Fever; worse at night","Malaria-like","China","30C",3
+"Cough; dry, tickling","Bronchitis","Bryonia","30C",3
+"Cough; worse at night","Bronchitis","Drosera","30C",3
+"Cough; loose, rattling","Chest Congestion","Antimonium Tart","30C",3
+"Cough; with bloody sputum","Pneumonia","Phosphorus","30C",3
+"Cough; worse from cold air","Bronchitis","Rumex","30C",2
+"Cough; spasmodic, whooping","Whooping Cough","Drosera","30C",3
+"Cough; with hoarseness","Laryngitis","Causticum","30C",3
+"Anxiety; anticipatory","Generalized Anxiety","Argentum Nitricum","30C",3
+"Anxiety; about health","Health Anxiety","Arsenicum Album","30C",3
+"Anxiety; with restlessness","Panic Disorder","Arsenicum Album","30C",3
+"Anxiety; stage fright","Performance Anxiety","Gelsemium","30C",3
+"Anxiety; with palpitations","Anxiety Disorder","Aconitum","30C",2
+"Anxiety; from grief","Grief","Ignatia","30C",3
+"Stomach; burning pain","Gastritis","Arsenicum Album","30C",3
+"Stomach; nausea worse morning","Morning Sickness","Nux Vomica","30C",3
+"Stomach; bloating after eating","Indigestion","Lycopodium","30C",3
+"Stomach; heartburn","GERD","Robinia","30C",3
+"Stomach; craving for sour","Dyspepsia","Phosphoric Acid","30C",2
+"Stomach; aversion to meat","Liver Disorder","Sepia","30C",2
+"Stomach; thirst for cold water","Gastritis","Phosphorus","30C",3
+"Joint; pain worse from motion","Arthritis","Bryonia","30C",3
+"Joint; pain better from motion","Rheumatism","Rhus Tox","30C",3
+"Joint; stiffness in morning","Rheumatoid Arthritis","Rhus Tox","30C",3
+"Joint; swelling, red, hot","Gout","Apis Mellifica","30C",3
+"Joint; pain in small joints","Rheumatoid Arthritis","Actaea Spicata","30C",2
+"Joint; cracking sounds","Osteoarthritis","Causticum","30C",2
+"Skin; itching worse at night","Eczema","Sulphur","30C",3
+"Skin; burning, better from heat","Urticaria","Arsenicum Album","30C",3
+"Skin; dry, rough, scaly","Psoriasis","Graphites","30C",3
+"Skin; weeping eruptions","Eczema","Graphites","30C",3
+"Skin; hives from cold","Urticaria","Apis Mellifica","30C",2
+"Skin; acne, pustular","Acne","Hepar Sulph","30C",3
+"Sleep; insomnia from anxiety","Insomnia","Coffea Cruda","30C",3
+"Sleep; sleepless after 3am","Insomnia","Nux Vomica","30C",3
+"Sleep; nightmares","Sleep Disorder","Stramonium","30C",2
+"Sleep; restless, tossing","Insomnia","Rhus Tox","30C",2
+"Throat; sore, right-sided","Pharyngitis","Lycopodium","30C",2
+"Throat; sore, left-sided","Pharyngitis","Lachesis","30C",3
+"Throat; pain extends to ear","Tonsillitis","Phytolacca","30C",3
+"Throat; difficulty swallowing","Tonsillitis","Mercurius Sol","30C",2
+"Throat; dry, burning","Pharyngitis","Belladonna","30C",2
+"Eyes; burning, watering","Conjunctivitis","Euphrasia","30C",3
+"Eyes; stye on eyelid","Stye","Staphysagria","30C",3
+"Eyes; photophobia","Eye Strain","Belladonna","30C",2
+"Nose; watery discharge","Allergic Rhinitis","Allium Cepa","30C",3
+"Nose; blocked, stuffy","Common Cold","Nux Vomica","30C",2
+"Nose; sneezing fits","Hay Fever","Sabadilla","30C",3
+"Ear; pain, throbbing","Otitis Media","Belladonna","30C",3
+"Ear; discharge, offensive","Otitis Externa","Mercurius Sol","30C",3
+"Ear; tinnitus, ringing","Tinnitus","Chininum Sulph","30C",2
+"Back; pain, lower, stiffness","Lumbago","Rhus Tox","30C",3
+"Back; pain worse sitting","Sciatica","Ammonium Mur","30C",2
+"Back; pain radiating to leg","Sciatica","Colocynthis","30C",3
+"Digestion; constipation, no urge","Constipation","Alumina","30C",3
+"Digestion; diarrhea, watery","Gastroenteritis","Podophyllum","30C",3
+"Digestion; alternating constipation diarrhea","IBS","Sulphur","30C",2
+"Mind; depression, indifference","Depression","Sepia","30C",3
+"Mind; irritability, impatience","Stress","Nux Vomica","30C",3
+"Mind; weeping, changeable moods","Hormonal Imbalance","Pulsatilla","30C",3
+"Mind; forgetfulness","Memory Issues","Anacardium","30C",2
+"Women; menstrual cramps","Dysmenorrhea","Magnesia Phos","6X",3
+"Women; irregular periods","Menstrual Disorder","Pulsatilla","30C",3
+"Women; hot flashes","Menopause","Lachesis","30C",3
+"Women; leucorrhea, white","Vaginal Discharge","Calcarea Carb","30C",2
+"Children; teething pain","Teething","Chamomilla","30C",3
+"Children; colic, draws legs up","Infantile Colic","Colocynthis","30C",3
+"Children; bedwetting","Enuresis","Equisetum","30C",2
+"Respiratory; asthma worse at night","Asthma","Arsenicum Album","30C",3
+"Respiratory; wheezing","Asthma","Ipecacuanha","30C",2
+"Respiratory; shortness of breath","Dyspnea","Carbo Veg","30C",3
+"Urinary; burning urination","UTI","Cantharis","30C",3
+"Urinary; frequent urination","Urinary Frequency","Sabal Serrulata","30C",2
+"Urinary; kidney stone pain","Renal Colic","Berberis Vulgaris","30C",3
+"Heart; palpitations","Cardiac Anxiety","Digitalis","30C",2
+"Heart; chest pain, anxiety","Angina","Cactus","30C",2
+"Nerves; numbness, tingling","Neuropathy","Hypericum","30C",3
+"Nerves; sciatica, shooting pain","Sciatica","Hypericum","30C",3
+"Allergy; hay fever, sneezing","Allergic Rhinitis","Natrum Mur","30C",2
+"Allergy; food intolerance","Food Allergy","Carbo Veg","30C",2
+"Trauma; bruising, soreness","Injury","Arnica Montana","30C",3
+"Trauma; after surgery","Post-Operative","Arnica Montana","200C",3
+"Trauma; sprains, strains","Soft Tissue Injury","Rhus Tox","30C",3

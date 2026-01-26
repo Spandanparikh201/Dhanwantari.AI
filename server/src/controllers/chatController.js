@@ -4,13 +4,56 @@ const crypto = require('crypto');
 
 /**
  * Chat Controller - Handles AI consultation interactions
- * CURRENTLY IN MOCK MODE FOR DEMONSTRATION
+ * NOW USING ACTUAL GEMINI AI
  */
+
+// System prompt for homeopathy consultation
+const HOMEOPATHY_SYSTEM_PROMPT = `You are Dhanwantari, an AI Homeopathy Assistant based on classical homeopathic principles.
+
+Your role is to:
+1. Gather detailed symptom information from the patient
+2. Ask clarifying questions about modalities (what makes symptoms better/worse)
+3. Consider the patient's constitution and mental/emotional state
+4. Suggest appropriate homeopathic remedies with potency and dosage
+
+Guidelines:
+- Always ask about: location, sensation type, modalities, onset, and associated symptoms
+- Reference classical materia medica (Kent, Boericke) when suggesting remedies
+- Provide remedies in format: **Remedy Name** (e.g., Belladonna 30C)
+- Include dosage instructions (e.g., "3 pellets every 4 hours")
+- Always add a disclaimer about consulting a qualified homeopath
+
+IMPORTANT SAFETY RULES:
+- Never diagnose serious conditions
+- Always recommend professional consultation for: chest pain, breathing difficulty, high fever, severe pain, or any emergency
+- Do not prescribe for children under 2 without professional guidance
+- Limit to common acute conditions
+
+Format your responses in clear markdown with proper sections.`;
+
+// AI Provider singleton
+let aiProvider = null;
+let aiInitialized = false;
+
+const initializeAI = async () => {
+    if (!aiInitialized) {
+        try {
+            aiProvider = AIProviderFactory.createProvider();
+            await aiProvider.initialize();
+            aiInitialized = true;
+            console.log('AI Provider initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize AI Provider:', error.message);
+            // Don't throw - allow fallback to mock responses
+            aiProvider = null;
+        }
+    }
+    return aiProvider;
+};
 
 exports.chat = async (req, res) => {
     try {
         const { history } = req.body;
-        // Check if user is authenticated (req.user exists)
         const userId = req.user ? req.user.id : null;
 
         console.log("Chat Request Received:", JSON.stringify(history));
@@ -22,12 +65,7 @@ exports.chat = async (req, res) => {
             });
         }
 
-        // Simulating AI processing delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        let responseText = "";
-
-        // Handle both simple content and Gemini parts structure
+        // Extract original message for archiving
         const lastMsgObj = history[history.length - 1];
         let originalMessage = "";
 
@@ -37,16 +75,33 @@ exports.chat = async (req, res) => {
             originalMessage = lastMsgObj.parts[0].text;
         }
 
-        const lowerMessage = originalMessage.toLowerCase();
+        let responseText = "";
 
-        if (lowerMessage.includes('hi') || lowerMessage.includes('hello')) {
-            responseText = "Hello! I am Dhanwantari, your AI Homeopathy assistant. Please describe your main symptoms in detail. Be sure to mention:\n1. Location of the symptom\n2. Type of sensation\n3. What makes it better or worse (modalities)";
-        } else if (lowerMessage.includes('headache')) {
-            responseText = "I understand you are having a headache. \n\nCould you please specify:\n- Is it throbbing, dull, or piercing?\n- Is it on the left side, right side, or all over?\n- Does light or noise make it worse?";
-        } else if (lowerMessage.includes('fever')) {
-            responseText = "For the fever, are you experiencing any chills or sweating? Are you thirsty or not thirsty at all?";
-        } else {
-            responseText = "Thank you for describing your symptoms. \n\nBased on classical homeopathic principles, I have analyzed your case. \n\n**Suggested Remedy: Arnica Montana 30C**\n\n**Indication:** Best suited for soreness, bruised sensation, and trauma-like pain.\n\n**Dosage:** Take 3 pellets every 4 hours until improvement is felt.\n\n*Disclaimer: This is an AI consultation. Please consult a qualified homeopath for chronic or severe conditions.*";
+        // Try to use Gemini AI
+        try {
+            const provider = await initializeAI();
+
+            if (provider) {
+                // Use actual Gemini AI
+                console.log('Using Gemini AI for response...');
+                responseText = await provider.generateResponse(history, HOMEOPATHY_SYSTEM_PROMPT);
+            } else {
+                // Fallback to enhanced mock responses if AI unavailable
+                responseText = generateFallbackResponse(originalMessage);
+            }
+        } catch (aiError) {
+            console.error('AI Generation Error:', aiError);
+
+            // Handle quota exceeded
+            if (aiError.status === 429) {
+                return res.status(429).json({
+                    error: 'Rate Limited',
+                    message: 'AI service is temporarily unavailable. Please try again later.'
+                });
+            }
+
+            // Fallback for other errors
+            responseText = generateFallbackResponse(originalMessage);
         }
 
         // --- ARCHIVE TO DATABASE ---
@@ -55,8 +110,6 @@ exports.chat = async (req, res) => {
                 await DatabaseService.initPromise;
                 const pool = DatabaseService.pool;
 
-                // 1. Find or Create Consultation
-                // Check for active AI consultation for this user
                 const [rows] = await pool.execute(
                     "SELECT id FROM consultations WHERE patient_id = ? AND status = 'in_progress' AND type = 'ai_only' ORDER BY created_at DESC LIMIT 1",
                     [userId]
@@ -74,13 +127,11 @@ exports.chat = async (req, res) => {
                     );
                 }
 
-                // 2. Save User Message
                 await pool.execute(
                     "INSERT INTO messages (consultation_id, sender_type, sender_id, message_type, content) VALUES (?, 'patient', ?, 'text', ?)",
                     [consultationId, userId, originalMessage]
                 );
 
-                // 3. Save AI Response
                 await pool.execute(
                     "INSERT INTO messages (consultation_id, sender_type, message_type, content) VALUES (?, 'ai', 'text', ?)",
                     [consultationId, responseText]
@@ -90,10 +141,8 @@ exports.chat = async (req, res) => {
 
             } catch (dbError) {
                 console.error("Failed to archive chat to database:", dbError);
-                // Non-blocking error
             }
         }
-        // ---------------------------
 
         res.json({
             role: 'assistant',
@@ -109,3 +158,95 @@ exports.chat = async (req, res) => {
         });
     }
 };
+
+/**
+ * Fallback response generator when Gemini is unavailable
+ */
+function generateFallbackResponse(message) {
+    const lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('hey')) {
+        return `Hello! I am **Dhanwantari**, your AI Homeopathy Assistant.
+
+I'm here to help you find suitable homeopathic remedies based on your symptoms. To provide the best recommendations, please describe your symptoms in detail:
+
+1. **Location** - Where exactly is the problem?
+2. **Sensation** - What does it feel like? (throbbing, burning, aching, etc.)
+3. **Modalities** - What makes it better or worse? (heat, cold, motion, rest, time of day)
+4. **Onset** - When did it start? Suddenly or gradually?
+
+What symptoms are you experiencing today?`;
+    }
+
+    if (lowerMessage.includes('headache')) {
+        return `I understand you're experiencing a **headache**. To suggest the most appropriate remedy, I need more details:
+
+**Please tell me:**
+- Is the pain **throbbing**, **pressing**, **piercing**, or **dull**?
+- Is it on the **left side**, **right side**, **forehead**, or **back of head**?
+- Does **light** or **noise** make it worse?
+- Does **pressure** or **rest** help?
+- Did it come on **suddenly** or **gradually**?
+
+Common homeopathic remedies for headaches include:
+- **Belladonna** - Throbbing, sudden onset, worse from light/noise
+- **Bryonia** - Bursting pain, worse from motion
+- **Gelsemium** - Band-like pressure, starts at back of head
+
+*Please provide more details for a personalized recommendation.*`;
+    }
+
+    if (lowerMessage.includes('fever')) {
+        return `For **fever**, the specific symptoms help determine the best remedy:
+
+**Please tell me:**
+- Is the fever **high and sudden** or **gradual**?
+- Are you experiencing **chills** or **sweating**?
+- Are you **thirsty** or **thirstless**?
+- Do you feel **restless** or want to stay **still**?
+
+Common fever remedies:
+- **Aconitum** - Sudden high fever, restlessness, after cold exposure
+- **Belladonna** - High fever, red face, throbbing
+- **Gelsemium** - Flu-like, weak, drowsy, thirstless
+
+*Please share more details for a specific recommendation.*`;
+    }
+
+    if (lowerMessage.includes('anxiety') || lowerMessage.includes('stress') || lowerMessage.includes('worried')) {
+        return `I understand you're experiencing **anxiety or stress**. Homeopathy considers the mental-emotional picture very important.
+
+**Please describe:**
+- Is the anxiety about **health**, **future**, or **specific situations**?
+- Do you feel **restless** or **paralyzed**?
+- Is it worse at **specific times** (night, morning)?
+- Any **physical symptoms** accompanying it? (palpitations, stomach upset)
+
+Common anxiety remedies:
+- **Arsenicum Album** - Health anxiety, restlessness, worse at midnight
+- **Argentum Nitricum** - Anticipatory anxiety, fear of crowds
+- **Gelsemium** - Stage fright, examination fear, weakness
+
+*Please share more for a personalized suggestion.*`;
+    }
+
+    // Default response
+    return `Thank you for sharing your symptoms. Based on classical homeopathic analysis:
+
+**General Assessment:**
+Your symptoms suggest a need for constitutional treatment. While I analyze your case, here are some initial observations.
+
+**Recommended Approach:**
+1. Keep note of what makes symptoms **better or worse**
+2. Observe patterns related to **time of day** or **weather**
+3. Note any **emotional changes** accompanying physical symptoms
+
+**Suggested Remedy: Arnica Montana 30C**
+
+**Indication:** Useful for general soreness, trauma, and as a starting point.
+
+**Dosage:** Take 3 pellets, 3 times daily for 3 days. Stop when improvement begins.
+
+---
+*⚠️ Disclaimer: This is AI-assisted guidance based on classical homeopathy. For chronic conditions, persistent symptoms, or serious health concerns, please consult a qualified homeopathic practitioner.*`;
+}

@@ -41,11 +41,25 @@ const Login = () => {
                     window.location.href = '/dashboard';
                 }
             } else {
-                alert(data.error || 'Login failed');
+                // More specific error messages
+                if (response.status === 401) {
+                    alert('Invalid email or password. Please try again.');
+                } else if (response.status === 403) {
+                    alert('Your account is inactive. Please contact support.');
+                } else if (response.status === 400) {
+                    alert(data.details?.join('\n') || data.error || 'Please check your input.');
+                } else {
+                    alert(data.error || 'Login failed. Please try again later.');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('An error occurred during login');
+            // Check if it's a network error
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                alert('Cannot connect to server. Please ensure the backend is running.');
+            } else {
+                alert('An error occurred during login. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

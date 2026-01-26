@@ -78,6 +78,10 @@ app.use('/api/doctor', doctorRoutes);
 app.use('/api/prescription', prescriptionRoutes);
 app.use('/api/admin', adminRoutes);
 
+const repertoryRoutes = require('./routes/repertoryRoutes');
+app.use('/api/repertory', repertoryRoutes);
+
+
 // Global error handler (must be last)
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);

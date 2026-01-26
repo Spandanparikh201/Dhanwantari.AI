@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Sparkles, Activity, Layers, User, LogOut } from 'lucide-react';
+import { Menu, X, Sparkles, Activity, Layers, User, LogOut, Database } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -28,6 +28,7 @@ const Navbar = () => {
         { name: 'Home', icon: <Sparkles size={16} />, path: '/' },
         { name: 'Archives', icon: <Layers size={16} />, path: '/history' },
         { name: 'Consultation', icon: <Activity size={16} />, path: '/consultation' },
+        { name: 'Remedy Finder', icon: <Database size={16} />, path: '/repertory' },
     ];
 
     // Add Dashboard link only for logged-in users
@@ -36,6 +37,7 @@ const Navbar = () => {
         { name: 'Dashboard', icon: <User size={16} />, path: user.role === 'admin' ? '/admin' : '/dashboard' },
         { name: 'Archives', icon: <Layers size={16} />, path: '/history' },
         { name: 'Consultation', icon: <Activity size={16} />, path: '/consultation' },
+        { name: 'Remedy Finder', icon: <Database size={16} />, path: '/repertory' },
     ] : navLinks;
 
     const handleNav = (path) => {

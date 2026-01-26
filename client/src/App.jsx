@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ResetPassword from './pages/ResetPassword';
+import RemedyFinder from './pages/RemedyFinder';
 import { Button } from './components/ui/Button';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Landing />} />
+            <Route path="/repertory" element={<RemedyFinder />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
 
