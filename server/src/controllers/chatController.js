@@ -55,6 +55,7 @@ exports.chat = async (req, res) => {
     try {
         const { history } = req.body;
         const userId = req.user ? req.user.id : null;
+        let consultationId = null;
 
         console.log("Chat Request Received:", JSON.stringify(history));
 
@@ -115,7 +116,7 @@ exports.chat = async (req, res) => {
                     [userId]
                 );
 
-                let consultationId;
+                // consultationId declared above
 
                 if (rows.length > 0) {
                     consultationId = rows[0].id;
@@ -147,7 +148,8 @@ exports.chat = async (req, res) => {
         res.json({
             role: 'assistant',
             content: responseText,
-            prescription: null
+            prescription: null,
+            consultationId: consultationId
         });
 
     } catch (error) {

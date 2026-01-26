@@ -85,7 +85,7 @@ exports.generatePrescription = async (req, res) => {
         res.json({
             message: 'Prescription generated successfully',
             filename,
-            downloadUrl: `/api/prescriptions/download/${filename}`
+            downloadUrl: `/api/prescription/download/${filename}`
         });
 
     } catch (error) {

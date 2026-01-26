@@ -13,6 +13,7 @@ export const useChat = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [prescription, setPrescription] = useState(null);
+    const [consultationId, setConsultationId] = useState(null);
 
     const sendMessage = useCallback(async (content) => {
         if (!content.trim()) return;
@@ -37,11 +38,11 @@ export const useChat = () => {
                 }
             });
 
-            const { role, content: assistantContent, prescription: rx } = response.data;
+            const { role, content: assistantContent, prescription: rx, consultationId: cid } = response.data;
             const assistantMessage = { role, content: assistantContent };
-
             setMessages((prev) => [...prev, assistantMessage]);
             if (rx) setPrescription(rx);
+            if (cid) setConsultationId(cid);
 
         } catch (err) {
             console.error("Chat Error:", err);
@@ -52,5 +53,26 @@ export const useChat = () => {
         }
     }, [messages]); // Dependency on messages to construct history correctly
 
-    return { messages, loading, error, sendMessage, prescription };
+    const generatePrescription = async () => {
+        if (!consultationId) {
+            console.error('No consultationId available for prescription generation');
+            return null;
+        }
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:3000/api/prescription/generate', {
+                consultationId
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data; // contains filename and downloadUrl
+        } catch (err) {
+            console.error('Generate Prescription Error:', err);
+            return null;
+        }
+    };
+    return { messages, loading, error, sendMessage, prescription, consultationId, generatePrescription };
 };

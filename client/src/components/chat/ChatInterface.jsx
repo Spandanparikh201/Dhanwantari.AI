@@ -8,7 +8,7 @@ import { FloatingShapes } from '../ui/FloatingShapes';
 import DisclaimerModal from '../legal/DisclaimerModal';
 
 export const ChatInterface = () => {
-    const { messages, loading, error, sendMessage, prescription } = useChat();
+    const { messages, loading, error, sendMessage, prescription, consultationId, generatePrescription } = useChat();
     const [input, setInput] = useState('');
     const [attachedFile, setAttachedFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
@@ -200,6 +200,23 @@ export const ChatInterface = () => {
                                 <X className="w-4 h-4 text-text-muted" />
                             </button>
                         </div>
+                    )}
+                    {/* Prescription Download Button */}
+                    {consultationId && (
+                        <button
+                            onClick={async () => {
+                                const result = await generatePrescription();
+                                if (result?.downloadUrl) {
+                                    window.open(result.downloadUrl, '_blank');
+                                } else {
+                                    alert('Failed to generate prescription');
+                                }
+                            }}
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md disabled:opacity-50"
+                            disabled={loading}
+                        >
+                            {loading ? 'Generating...' : 'Download Prescription'}
+                        </button>
                     )}
 
                     {/* Hidden File Input */}
