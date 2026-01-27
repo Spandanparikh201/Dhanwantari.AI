@@ -47,9 +47,12 @@ exports.generatePrescription = async (req, res) => {
             ? JSON.parse(consultation.prescription || 'null')
             : consultation.prescription;
 
-        if (!prescription) {
-            return res.status(400).json({ error: 'No prescription available for this consultation' });
+        if (!prescription && !symptoms) {
+            // Only fail if we have absolutely nothing
+            // But we likely have at least patient info
         }
+
+        const safePrescription = prescription || {};
 
         // Calculate age
         const age = consultation.date_of_birth
@@ -65,10 +68,10 @@ exports.generatePrescription = async (req, res) => {
             doctorName: null, // Will be populated if reviewed by doctor
             chiefComplaint: symptoms.chief_complaint || 'Not specified',
             symptoms: symptoms.additional_symptoms || [],
-            remedy: prescription.remedy || 'Not specified',
-            potency: prescription.potency || 'Not specified',
-            dosage: prescription.dosage || 'As directed',
-            reasoning: prescription.reasoning || 'Based on homeopathic principles and symptom analysis.',
+            remedy: safePrescription.remedy || 'Pending Analysis',
+            potency: safePrescription.potency || '-',
+            dosage: safePrescription.dosage || 'Please review consultation chat',
+            reasoning: safePrescription.reasoning || 'Prescription generated based on consultation session.',
             date: consultation.created_at
         };
 

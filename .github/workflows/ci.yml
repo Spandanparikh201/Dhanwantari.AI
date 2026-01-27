@@ -1,0 +1,55 @@
+name: Dhanwantari CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Server CI
+    - name: Use Node.js ${{ matrix.node-version }} (Server)
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+
+    - name: Install Server Dependencies
+      working-directory: ./server
+      run: npm ci
+
+    - name: Generate Prisma Client
+      working-directory: ./server
+      run: npx prisma generate
+
+    # Unit Tests
+    - name: Run Server Tests
+      working-directory: ./server
+      run: npm test
+
+    # Client CI
+    - name: Use Node.js ${{ matrix.node-version }} (Client)
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install Client Dependencies
+      working-directory: ./client
+      run: npm ci
+
+    - name: Build Client
+      working-directory: ./client
+      run: npm run build

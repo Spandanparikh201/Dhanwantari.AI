@@ -1,0 +1,448 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model admin_logs {
+  id                                     BigInt                    @id @default(autoincrement())
+  admin_id                               String                    @db.VarChar(50)
+  action                                 String                    @db.VarChar(255)
+  action_status                          admin_logs_action_status? @default(success)
+  resource_type                          String?                   @db.VarChar(50)
+  resource_id                            String?                   @db.VarChar(50)
+  target_user_id                         String?                   @db.VarChar(50)
+  changes                                String?                   @db.LongText
+  ip_address                             String?                   @db.VarChar(45)
+  user_agent                             String?                   @db.Text
+  created_at                             DateTime                  @default(now()) @db.Timestamp(0)
+  users_admin_logs_admin_idTousers       users                     @relation("admin_logs_admin_idTousers", fields: [admin_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "admin_logs_ibfk_1")
+  users_admin_logs_target_user_idTousers users?                    @relation("admin_logs_target_user_idTousers", fields: [target_user_id], references: [id], onUpdate: Restrict, map: "admin_logs_ibfk_2")
+
+  @@index([action], map: "idx_action")
+  @@index([admin_id, created_at], map: "idx_admin_time")
+  @@index([resource_type, resource_id], map: "idx_resource")
+  @@index([action_status], map: "idx_status")
+  @@index([target_user_id], map: "idx_target")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model consultations {
+  id                                    String                        @id @db.VarChar(50)
+  patient_id                            String                        @db.VarChar(50)
+  doctor_id                             String?                       @db.VarChar(50)
+  type                                  consultations_type?           @default(ai_only)
+  mode                                  consultations_mode?           @default(chat)
+  status                                consultations_status?         @default(in_progress)
+  scheduled_at                          DateTime?                     @db.Timestamp(0)
+  started_at                            DateTime?                     @db.Timestamp(0)
+  completed_at                          DateTime?                     @db.Timestamp(0)
+  duration_minutes                      Int?
+  chief_complaint                       String?                       @db.Text
+  symptoms                              String?                       @db.LongText
+  vital_signs                           String?                       @db.LongText
+  ai_analysis                           String?                       @db.Text
+  ai_confidence_score                   Decimal?                      @db.Decimal(3, 2)
+  doctor_notes                          String?                       @db.Text
+  diagnosis                             String?                       @db.Text
+  prescription                          String?                       @db.LongText
+  follow_up_required                    Boolean?                      @default(false)
+  follow_up_date                        DateTime?                     @db.Date
+  next_consultation_id                  String?                       @db.VarChar(50)
+  payment_amount                        Decimal?                      @db.Decimal(10, 2)
+  payment_status                        consultations_payment_status? @default(pending)
+  payment_transaction_id                String?                       @db.VarChar(100)
+  created_at                            DateTime                      @default(now()) @db.Timestamp(0)
+  updated_at                            DateTime                      @default(now()) @db.Timestamp(0)
+  users_consultations_patient_idTousers users                         @relation("consultations_patient_idTousers", fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "consultations_ibfk_1")
+  users_consultations_doctor_idTousers  users?                        @relation("consultations_doctor_idTousers", fields: [doctor_id], references: [id], onUpdate: Restrict, map: "consultations_ibfk_2")
+  consultations                         consultations?                @relation("consultationsToconsultations", fields: [next_consultation_id], references: [id], onUpdate: Restrict, map: "consultations_ibfk_3")
+  other_consultations                   consultations[]               @relation("consultationsToconsultations")
+  doctor_reviews                        doctor_reviews[]
+  file_uploads                          file_uploads[]
+  messages                              messages[]
+  prescriptions                         prescriptions[]
+
+  @@index([doctor_id], map: "idx_doctor")
+  @@index([patient_id], map: "idx_patient")
+  @@index([payment_status], map: "idx_payment")
+  @@index([scheduled_at], map: "idx_scheduled")
+  @@index([status], map: "idx_status")
+  @@index([type], map: "idx_type")
+  @@index([next_consultation_id], map: "next_consultation_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model doctor_profiles {
+  id                                                Int       @id @default(autoincrement())
+  user_id                                           String    @unique(map: "user_id") @db.VarChar(50)
+  full_name                                         String    @db.VarChar(255)
+  registration_number                               String    @unique(map: "registration_number") @db.VarChar(100)
+  registration_authority                            String?   @db.VarChar(100)
+  qualification                                     String?   @db.VarChar(255)
+  specialization                                    String?   @db.VarChar(255)
+  experience_years                                  Int?
+  clinic_name                                       String?   @db.VarChar(255)
+  clinic_address                                    String?   @db.Text
+  clinic_pincode                                    String?   @db.VarChar(10)
+  clinic_latitude                                   Decimal?  @db.Decimal(10, 8)
+  clinic_longitude                                  Decimal?  @db.Decimal(11, 8)
+  consultation_fee                                  Decimal?  @default(0.00) @db.Decimal(10, 2)
+  online_consultation_available                     Boolean?  @default(true)
+  in_person_consultation_available                  Boolean?  @default(false)
+  consultation_duration_mins                        Int?      @default(30)
+  verified                                          Boolean?  @default(false)
+  verified_at                                       DateTime? @db.Timestamp(0)
+  verified_by_admin_id                              String?   @db.VarChar(50)
+  verification_documents                            String?   @db.LongText
+  bio                                               String?   @db.Text
+  languages_spoken                                  String?   @db.LongText
+  availability_schedule                             String?   @db.LongText
+  rating_average                                    Decimal?  @default(0.00) @db.Decimal(3, 2)
+  total_consultations                               Int?      @default(0)
+  created_at                                        DateTime  @default(now()) @db.Timestamp(0)
+  updated_at                                        DateTime  @default(now()) @db.Timestamp(0)
+  users_doctor_profiles_user_idTousers              users     @relation("doctor_profiles_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "doctor_profiles_ibfk_1")
+  users_doctor_profiles_verified_by_admin_idTousers users?    @relation("doctor_profiles_verified_by_admin_idTousers", fields: [verified_by_admin_id], references: [id], onUpdate: Restrict, map: "doctor_profiles_ibfk_2")
+
+  @@index([clinic_latitude, clinic_longitude], map: "idx_location")
+  @@index([rating_average], map: "idx_rating")
+  @@index([registration_number], map: "idx_registration")
+  @@index([user_id], map: "idx_user")
+  @@index([verified], map: "idx_verified")
+  @@index([verified_by_admin_id], map: "verified_by_admin_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model doctor_reviews {
+  id                                     BigInt                            @id @default(autoincrement())
+  doctor_id                              String                            @db.VarChar(50)
+  patient_id                             String                            @db.VarChar(50)
+  consultation_id                        String                            @db.VarChar(50)
+  rating                                 Int
+  review_text                            String?                           @db.Text
+  is_verified                            Boolean?                          @default(false)
+  is_visible                             Boolean?                          @default(true)
+  moderation_status                      doctor_reviews_moderation_status? @default(pending)
+  created_at                             DateTime                          @default(now()) @db.Timestamp(0)
+  updated_at                             DateTime                          @default(now()) @db.Timestamp(0)
+  users_doctor_reviews_doctor_idTousers  users                             @relation("doctor_reviews_doctor_idTousers", fields: [doctor_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "doctor_reviews_ibfk_1")
+  users_doctor_reviews_patient_idTousers users                             @relation("doctor_reviews_patient_idTousers", fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "doctor_reviews_ibfk_2")
+  consultations                          consultations                     @relation(fields: [consultation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "doctor_reviews_ibfk_3")
+
+  @@unique([patient_id, consultation_id], map: "unique_patient_consultation")
+  @@index([consultation_id], map: "consultation_id")
+  @@index([doctor_id], map: "idx_doctor")
+  @@index([moderation_status], map: "idx_moderation")
+  @@index([doctor_id, rating], map: "idx_rating")
+  @@index([is_verified], map: "idx_verified")
+}
+
+model email_verification_tokens {
+  id          Int       @id @default(autoincrement())
+  user_id     String    @db.VarChar(50)
+  token       String    @unique(map: "token") @db.VarChar(255)
+  expires_at  DateTime  @default(dbgenerated("(current_timestamp() + interval 24 hour)")) @db.Timestamp(0)
+  verified_at DateTime? @db.Timestamp(0)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "email_verification_tokens_ibfk_1")
+
+  @@index([expires_at], map: "idx_expires")
+  @@index([token], map: "idx_token")
+  @@index([user_id], map: "idx_user")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model file_uploads {
+  id                  String                 @id @db.VarChar(50)
+  uploaded_by_user_id String                 @db.VarChar(50)
+  consultation_id     String?                @db.VarChar(50)
+  file_type           file_uploads_file_type
+  original_filename   String                 @db.VarChar(255)
+  stored_filename     String                 @db.VarChar(255)
+  file_path           String                 @db.VarChar(500)
+  file_size_bytes     BigInt?
+  mime_type           String?                @db.VarChar(100)
+  is_medical_record   Boolean?               @default(false)
+  description         String?                @db.Text
+  ocr_extracted_text  String?                @db.Text
+  virus_scanned       Boolean?               @default(false)
+  virus_scan_date     DateTime?              @db.Timestamp(0)
+  created_at          DateTime               @default(now()) @db.Timestamp(0)
+  users               users                  @relation(fields: [uploaded_by_user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "file_uploads_ibfk_1")
+  consultations       consultations?         @relation(fields: [consultation_id], references: [id], onUpdate: Restrict, map: "file_uploads_ibfk_2")
+
+  @@index([consultation_id], map: "idx_consultation")
+  @@index([created_at], map: "idx_created")
+  @@index([file_type], map: "idx_type")
+  @@index([uploaded_by_user_id], map: "idx_uploader")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model messages {
+  id              BigInt                 @id @default(autoincrement())
+  consultation_id String                 @db.VarChar(50)
+  sender_type     messages_sender_type
+  sender_id       String?                @db.VarChar(50)
+  message_type    messages_message_type? @default(text)
+  content         String?                @db.Text
+  metadata        String?                @db.LongText
+  is_sensitive    Boolean?               @default(false)
+  read_at         DateTime?              @db.Timestamp(0)
+  created_at      DateTime               @default(now()) @db.Timestamp(0)
+  consultations   consultations          @relation(fields: [consultation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "messages_ibfk_1")
+  users           users?                 @relation(fields: [sender_id], references: [id], onUpdate: Restrict, map: "messages_ibfk_2")
+
+  @@index([consultation_id, created_at], map: "idx_consultation_time")
+  @@index([sender_id], map: "idx_sender")
+  @@index([consultation_id, read_at], map: "idx_unread")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model notifications {
+  id         BigInt             @id @default(autoincrement())
+  user_id    String             @db.VarChar(50)
+  type       notifications_type
+  title      String             @db.VarChar(255)
+  message    String?            @db.Text
+  action_url String?            @db.VarChar(500)
+  read_at    DateTime?          @db.Timestamp(0)
+  sent_at    DateTime           @default(now()) @db.Timestamp(0)
+  created_at DateTime           @default(now()) @db.Timestamp(0)
+  users      users              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_1")
+
+  @@index([created_at], map: "idx_created")
+  @@index([type], map: "idx_type")
+  @@index([user_id, read_at], map: "idx_user_unread")
+}
+
+model password_reset_tokens {
+  id         Int       @id @default(autoincrement())
+  user_id    String    @db.VarChar(50)
+  token      String    @unique(map: "token") @db.VarChar(255)
+  expires_at DateTime  @default(dbgenerated("(current_timestamp() + interval 15 minute)")) @db.Timestamp(0)
+  used_at    DateTime? @db.Timestamp(0)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "password_reset_tokens_ibfk_1")
+
+  @@index([expires_at], map: "idx_expires")
+  @@index([token], map: "idx_token")
+  @@index([user_id], map: "idx_user")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model patient_profiles {
+  id                         Int                      @id @default(autoincrement())
+  user_id                    String                   @unique(map: "user_id") @db.VarChar(50)
+  full_name                  String                   @db.VarChar(255)
+  date_of_birth              DateTime?                @db.Date
+  gender                     patient_profiles_gender?
+  blood_group                String?                  @db.VarChar(10)
+  height_cm                  Decimal?                 @db.Decimal(5, 2)
+  weight_kg                  Decimal?                 @db.Decimal(5, 2)
+  bmi                        Decimal?                 @db.Decimal(4, 2)
+  allergies                  String?                  @db.LongText
+  chronic_conditions         String?                  @db.LongText
+  current_medications        String?                  @db.LongText
+  family_medical_history     String?                  @db.Text
+  lifestyle                  String?                  @db.LongText
+  emergency_contact_name     String?                  @db.VarChar(255)
+  emergency_contact_phone    String?                  @db.VarChar(20)
+  emergency_contact_relation String?                  @db.VarChar(50)
+  preferred_language         String?                  @default("en") @db.VarChar(10)
+  timezone                   String?                  @default("Asia/Kolkata") @db.VarChar(50)
+  created_at                 DateTime                 @default(now()) @db.Timestamp(0)
+  updated_at                 DateTime                 @default(now()) @db.Timestamp(0)
+  users                      users                    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "patient_profiles_ibfk_1")
+
+  @@index([date_of_birth], map: "idx_dob")
+  @@index([user_id], map: "idx_user")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model prescription_items {
+  id                   BigInt        @id @default(autoincrement())
+  prescription_id      String        @db.VarChar(50)
+  remedy_name          String        @db.VarChar(255)
+  potency              String?       @db.VarChar(20)
+  dosage               String?       @db.VarChar(100)
+  frequency            String?       @db.VarChar(100)
+  duration_days        Int?
+  special_instructions String?       @db.Text
+  order_sequence       Int?          @default(1)
+  created_at           DateTime      @default(now()) @db.Timestamp(0)
+  prescriptions        prescriptions @relation(fields: [prescription_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "prescription_items_ibfk_1")
+
+  @@index([prescription_id], map: "idx_prescription")
+  @@index([remedy_name], map: "idx_remedy")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model prescriptions {
+  id                                                 String                           @id @db.VarChar(50)
+  consultation_id                                    String                           @db.VarChar(50)
+  prescribed_by_doctor_id                            String?                          @db.VarChar(50)
+  patient_id                                         String                           @db.VarChar(50)
+  prescription_type                                  prescriptions_prescription_type? @default(homeopathic)
+  issued_at                                          DateTime                         @default(now()) @db.Timestamp(0)
+  valid_until                                        DateTime?                        @db.Date
+  instructions                                       String?                          @db.Text
+  precautions                                        String?                          @db.Text
+  created_at                                         DateTime                         @default(now()) @db.Timestamp(0)
+  prescription_items                                 prescription_items[]
+  consultations                                      consultations                    @relation(fields: [consultation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "prescriptions_ibfk_1")
+  users_prescriptions_prescribed_by_doctor_idTousers users?                           @relation("prescriptions_prescribed_by_doctor_idTousers", fields: [prescribed_by_doctor_id], references: [id], onUpdate: Restrict, map: "prescriptions_ibfk_2")
+  users_prescriptions_patient_idTousers              users                            @relation("prescriptions_patient_idTousers", fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "prescriptions_ibfk_3")
+
+  @@index([consultation_id], map: "idx_consultation")
+  @@index([prescribed_by_doctor_id], map: "idx_doctor")
+  @@index([patient_id], map: "idx_patient")
+  @@index([valid_until], map: "idx_valid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id                                                          String                      @id @db.VarChar(50)
+  email                                                       String                      @unique(map: "email") @db.VarChar(255)
+  password_hash                                               String                      @db.VarChar(255)
+  role                                                        users_role                  @default(patient)
+  status                                                      users_status?               @default(pending_verification)
+  email_verified                                              Boolean?                    @default(false)
+  phone                                                       String?                     @db.VarChar(20)
+  phone_verified                                              Boolean?                    @default(false)
+  last_login_at                                               DateTime?                   @db.Timestamp(0)
+  failed_login_attempts                                       Int?                        @default(0)
+  locked_until                                                DateTime?                   @db.Timestamp(0)
+  consent_gdpr                                                Boolean?                    @default(false)
+  consent_date                                                DateTime?                   @db.Timestamp(0)
+  created_at                                                  DateTime                    @default(now()) @db.Timestamp(0)
+  updated_at                                                  DateTime                    @default(now()) @db.Timestamp(0)
+  deleted_at                                                  DateTime?                   @db.Timestamp(0)
+  admin_logs_admin_logs_admin_idTousers                       admin_logs[]                @relation("admin_logs_admin_idTousers")
+  admin_logs_admin_logs_target_user_idTousers                 admin_logs[]                @relation("admin_logs_target_user_idTousers")
+  consultations_consultations_patient_idTousers               consultations[]             @relation("consultations_patient_idTousers")
+  consultations_consultations_doctor_idTousers                consultations[]             @relation("consultations_doctor_idTousers")
+  doctor_profiles_doctor_profiles_user_idTousers              doctor_profiles?            @relation("doctor_profiles_user_idTousers")
+  doctor_profiles_doctor_profiles_verified_by_admin_idTousers doctor_profiles[]           @relation("doctor_profiles_verified_by_admin_idTousers")
+  doctor_reviews_doctor_reviews_doctor_idTousers              doctor_reviews[]            @relation("doctor_reviews_doctor_idTousers")
+  doctor_reviews_doctor_reviews_patient_idTousers             doctor_reviews[]            @relation("doctor_reviews_patient_idTousers")
+  email_verification_tokens                                   email_verification_tokens[]
+  file_uploads                                                file_uploads[]
+  messages                                                    messages[]
+  notifications                                               notifications[]
+  password_reset_tokens                                       password_reset_tokens[]
+  patient_profiles                                            patient_profiles?
+  prescriptions_prescriptions_prescribed_by_doctor_idTousers  prescriptions[]             @relation("prescriptions_prescribed_by_doctor_idTousers")
+  prescriptions_prescriptions_patient_idTousers               prescriptions[]             @relation("prescriptions_patient_idTousers")
+
+  @@index([deleted_at], map: "idx_deleted")
+  @@index([email], map: "idx_email")
+  @@index([locked_until], map: "idx_locked")
+  @@index([role], map: "idx_role")
+  @@index([status], map: "idx_status")
+}
+
+enum messages_sender_type {
+  patient
+  doctor
+  ai
+  system
+}
+
+enum notifications_type {
+  appointment_reminder
+  prescription_ready
+  message_received
+  payment_received
+  system_alert
+  security_alert
+}
+
+enum admin_logs_action_status {
+  success
+  failed
+  denied
+}
+
+enum consultations_type {
+  ai_only
+  ai_assisted
+  doctor_only
+  hybrid
+}
+
+enum file_uploads_file_type {
+  image
+  pdf
+  audio
+  video
+  document
+}
+
+enum users_role {
+  patient
+  doctor
+  admin
+}
+
+enum consultations_mode {
+  chat
+  video
+  audio
+  in_person
+}
+
+enum messages_message_type {
+  text
+  image
+  file
+  audio
+  video
+  symptom_form
+}
+
+enum patient_profiles_gender {
+  male
+  female
+  non_binary
+  prefer_not_to_say
+}
+
+enum prescriptions_prescription_type {
+  homeopathic
+  allopathic
+  dietary
+  lifestyle
+}
+
+enum users_status {
+  active
+  inactive
+  suspended
+  pending_verification
+}
+
+enum consultations_status {
+  scheduled
+  in_progress
+  completed
+  cancelled
+  no_show
+}
+
+enum doctor_reviews_moderation_status {
+  pending
+  approved
+  rejected
+}
+
+enum consultations_payment_status {
+  pending
+  paid
+  refunded
+  waived
+}

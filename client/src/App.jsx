@@ -14,7 +14,7 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ResetPassword from './pages/ResetPassword';
 import RemedyFinder from './pages/RemedyFinder';
-import { Button } from './components/ui/Button';
+import Consultation from './pages/Consultation';
 
 function App() {
   const location = useLocation();
@@ -30,17 +30,7 @@ function App() {
 
             <Route path="/dashboard" element={<Dashboard />} />
 
-            <Route path="/consultation" element={
-              <div className="w-full">
-                <div className="flex items-center mb-8 gap-4 border-b border-phosphor/20 pb-4">
-                  <Button variant="ghost" className="!px-4 text-phosphor/60 hover:text-phosphor" onClick={() => navigate('/dashboard')}>
-                    ← TERMINATE_SESSION
-                  </Button>
-                  <h2 className="text-xl tracking-widest text-phosphor uppercase">Create_New_Consultation_Protocol</h2>
-                </div>
-                <ChatInterface />
-              </div>
-            } />
+            <Route path="/consultation" element={<Consultation />} />
 
             <Route path="/history" element={
               <div className="w-full">

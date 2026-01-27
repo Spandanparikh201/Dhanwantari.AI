@@ -1,19 +1,32 @@
 version: '3.8'
 
 services:
+  # Database Service (Optional - if you want a containerized DB)
+  # db:
+  #   image: mysql:8.0
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: dhanwantari
+  #   ports:
+  #     - "3307:3306"
+  #   volumes:
+  #     - db_data:/var/lib/mysql
+
   server:
     build: ./server
     ports:
       - "3000:3000"
     environment:
       - PORT=3000
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - DB_HOST=${DB_HOST}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
-    networks:
-      - app-network
+      - DB_HOST=host.docker.internal # Connects to your local machine's DB
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_NAME=dhanwantari
+      - AI_PROVIDER=GEMINI
+      # Pass your API key explicitly or use a .env file
+      - GEMINI_API_KEY=${GEMINI_API_KEY} 
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Required for Linux/some configs
 
   client:
     build: ./client
@@ -21,9 +34,6 @@ services:
       - "80:80"
     depends_on:
       - server
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+# volumes:
+#   db_data:

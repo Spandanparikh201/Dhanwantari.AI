@@ -26,7 +26,7 @@ const Landing = () => {
                 </div>
 
                 {/* Large Hero Text - Blue */}
-                <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter leading-none py-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter leading-none py-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
                     DHANWANTARI
                 </h1>
 

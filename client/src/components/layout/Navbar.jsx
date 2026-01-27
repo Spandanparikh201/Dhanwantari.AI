@@ -182,28 +182,28 @@ const Navbar = () => {
                         {/* Mobile User Section */}
                         {user ? (
                             <>
-                                <div className="flex items-center gap-3 p-3 border-t border-white/10" onClick={() => handleNav('/profile')}>
-                                    <div className="w-10 h-10 rounded-full bg-accent/30 flex items-center justify-center text-accent font-bold">
+                                <div className="flex items-center gap-3 p-3 border-t border-gray-100 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors" onClick={() => handleNav('/profile')}>
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                                         {getUserInitials(user.name)}
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-white font-medium">{user.name}</span>
-                                        <span className="text-xs text-accent">View Profile</span>
+                                        <span className="text-gray-900 font-medium">{user.name}</span>
+                                        <span className="text-xs text-blue-600">View Profile</span>
                                     </div>
                                 </div>
                                 <button
                                     onClick={handleLogout}
-                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors w-full"
+                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 text-red-500 transition-colors w-full"
                                 >
                                     <LogOut size={18} />
                                     <span>Logout</span>
                                 </button>
                             </>
                         ) : (
-                            <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+                            <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
                                 <Button
                                     variant="secondary"
-                                    className="w-full py-2 text-sm"
+                                    className="w-full py-2 text-sm text-gray-700 border-gray-200 hover:bg-gray-50"
                                     onClick={() => handleNav('/login')}
                                 >
                                     Login

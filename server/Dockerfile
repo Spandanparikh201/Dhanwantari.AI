@@ -1,20 +1,19 @@
-# Dockerfile for Node.js Server
-
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Install dependencies first (caching)
 COPY package*.json ./
-
-# Install dependencies
+# Install ALL dependencies (including devDependencies like nodemon if needed, 
+# but for prod usually --production. Given we might need prisma generate, let's keep it simple)
 RUN npm install
 
-# Copy app source
+# Copy source
 COPY . .
 
-# Expose port
+# Generate Prisma Client (Important!)
+RUN npx prisma generate
+
 EXPOSE 3000
 
-# Start command
 CMD ["npm", "start"]

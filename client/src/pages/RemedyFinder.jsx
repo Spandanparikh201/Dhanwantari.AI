@@ -60,10 +60,10 @@ const RemedyFinder = () => {
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto space-y-8">
-            <header className="border-b border-phosphor/20 pb-4 mb-8">
-                <h1 className="text-3xl font-display text-phosphor tracking-wider uppercase flex items-center gap-3">
-                    <Database className="w-8 h-8" />
+        <div className="w-full max-w-4xl mx-auto space-y-6 md:space-y-8 px-4 md:px-0">
+            <header className="border-b border-phosphor/20 pb-4 mb-6 md:mb-8">
+                <h1 className="text-2xl md:text-3xl font-display text-phosphor tracking-wider uppercase flex items-center gap-3">
+                    <Database className="w-6 h-6 md:w-8 md:h-8" />
                     Bio-Repertory Analysis
                 </h1>
                 <p className="text-phosphor/60 mt-2 font-mono text-sm">
@@ -72,7 +72,7 @@ const RemedyFinder = () => {
             </header>
 
             {/* Search Section */}
-            <div className="relative z-20">
+            <div className="relative z-50">
                 <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Search className="h-5 w-5 text-phosphor/50 group-focus-within:text-phosphor transition-colors" />
@@ -89,19 +89,19 @@ const RemedyFinder = () => {
                 <AnimatePresence>
                     {searchResults.length > 0 && (
                         <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="absolute z-30 w-full mt-1 bg-bg-dark border border-phosphor/30 shadow-lg max-h-60 overflow-y-auto custom-scrollbar"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="w-full mt-1 bg-bg-dark border border-phosphor/30 shadow-inner max-h-[60vh] overflow-y-auto custom-scrollbar"
                         >
                             {searchResults.map((s) => (
                                 <button
                                     key={s.id}
                                     onClick={() => addSymptom(s)}
-                                    className="w-full text-left px-4 py-3 hover:bg-phosphor/10 border-b border-phosphor/10 flex justify-between items-center group font-mono text-sm text-phosphor/80 hover:text-phosphor"
+                                    className="w-full text-left px-4 py-4 hover:bg-phosphor/10 border-b border-phosphor/10 flex justify-between items-center group font-mono text-sm text-phosphor/80 hover:text-phosphor transition-all"
                                 >
                                     <span>{s.name} <span className="text-xs text-phosphor/40 ml-2">[{s.category}]</span></span>
-                                    <Plus className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <Plus className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </button>
                             ))}
                         </motion.div>
@@ -121,14 +121,14 @@ const RemedyFinder = () => {
                                     initial={{ scale: 0.8, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
                                     exit={{ scale: 0.8, opacity: 0 }}
-                                    className="flex items-center gap-2 bg-phosphor/5 border border-phosphor/20 px-3 py-1.5 rounded-sm"
+                                    className="flex items-center gap-2 bg-phosphor/5 border border-phosphor/20 px-3 py-2 rounded-sm"
                                 >
                                     <span className="text-sm font-mono text-phosphor">{s.name}</span>
                                     <button
                                         onClick={() => removeSymptom(s.id)}
-                                        className="text-phosphor/40 hover:text-red-400 transition-colors"
+                                        className="text-phosphor/40 hover:text-red-400 p-1 rounded-full transition-colors"
                                     >
-                                        <X className="w-3 h-3" />
+                                        <X className="w-4 h-4" />
                                     </button>
                                 </motion.div>
                             ))}
@@ -138,13 +138,14 @@ const RemedyFinder = () => {
             )}
 
             {/* Action */}
-            <div className="flex justify-end">
+            <div className="flex justify-end sticky bottom-4 z-40 md:static">
                 <Button
                     onClick={analyze}
                     disabled={selectedSymptoms.length === 0 || loading}
-                    className="w-full md:w-auto"
+                    className="w-full md:w-auto shadow-lg shadow-black/50"
                 >
-                    {loading ? 'ANALYZING...' : 'INITIATE_REPERTORIZATION'}
+                    <span className="md:hidden">ANALYZE SYMPTOMS</span>
+                    <span className="hidden md:inline">{loading ? 'ANALYZING...' : 'INITIATE_REPERTORIZATION'}</span>
                 </Button>
             </div>
 

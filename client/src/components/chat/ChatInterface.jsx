@@ -98,18 +98,18 @@ export const ChatInterface = () => {
     }, []);
 
     return (
-        <div className="w-full h-[80vh] flex gap-8 font-body max-w-6xl mx-auto relative">
+        <div className="w-full h-[85vh] md:h-[80vh] flex gap-4 md:gap-8 font-body max-w-6xl mx-auto relative px-2 md:px-0">
             <FloatingShapes />
             {/* Main Chat Area */}
             <div className="flex-1 flex flex-col relative modern-card overflow-hidden z-10 glass-panel">
                 {/* Header Bar */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
+                <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary">
                             <Hash size={18} />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-text-main leading-tight">Consultation Session</h2>
+                            <h2 className="text-base md:text-lg font-bold text-text-main leading-tight">Consultation Session</h2>
                             <p className="text-xs text-text-muted">AI Homeopathy Assistant</p>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ export const ChatInterface = () => {
                 </div>
 
                 {/* Messages Area */}
-                <div className="flex-1 p-6 overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-200">
+                <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-200">
                     <div className="space-y-6">
                         {messages.length === 0 && (
                             <div className="text-center py-12 px-4">
@@ -176,26 +176,26 @@ export const ChatInterface = () => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 bg-white border-t border-gray-100">
+                <div className="p-3 md:p-4 bg-white border-t border-gray-100 mobile-safe-bottom">
                     {/* File Preview */}
                     {attachedFile && (
                         <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 overflow-hidden">
                                 {filePreview ? (
-                                    <img src={filePreview} alt="Preview" className="w-12 h-12 rounded object-cover" />
+                                    <img src={filePreview} alt="Preview" className="w-10 h-10 md:w-12 md:h-12 rounded object-cover flex-shrink-0" />
                                 ) : (
-                                    <div className="w-12 h-12 rounded bg-blue-100 flex items-center justify-center">
-                                        <FileText className="w-6 h-6 text-blue-600" />
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <FileText className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
                                     </div>
                                 )}
-                                <div>
-                                    <p className="text-sm font-medium text-text-main">{attachedFile.name}</p>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-medium text-text-main truncate">{attachedFile.name}</p>
                                     <p className="text-xs text-text-muted">{(attachedFile.size / 1024).toFixed(1)} KB</p>
                                 </div>
                             </div>
                             <button
                                 onClick={removeFile}
-                                className="p-1 hover:bg-blue-100 rounded-full transition-colors"
+                                className="p-2 hover:bg-blue-100 rounded-full transition-colors"
                             >
                                 <X className="w-4 h-4 text-text-muted" />
                             </button>
@@ -203,20 +203,22 @@ export const ChatInterface = () => {
                     )}
                     {/* Prescription Download Button */}
                     {consultationId && (
-                        <button
-                            onClick={async () => {
-                                const result = await generatePrescription();
-                                if (result?.downloadUrl) {
-                                    window.open(result.downloadUrl, '_blank');
-                                } else {
-                                    alert('Failed to generate prescription');
-                                }
-                            }}
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md disabled:opacity-50"
-                            disabled={loading}
-                        >
-                            {loading ? 'Generating...' : 'Download Prescription'}
-                        </button>
+                        <div className="mb-3">
+                            <button
+                                onClick={async () => {
+                                    const result = await generatePrescription();
+                                    if (result?.downloadUrl) {
+                                        window.open(result.downloadUrl, '_blank');
+                                    } else {
+                                        alert('Failed to generate prescription');
+                                    }
+                                }}
+                                className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-3 md:py-2 rounded-md disabled:opacity-50 text-sm font-medium transition-colors shadow-sm"
+                                disabled={loading}
+                            >
+                                {loading ? 'Generating Prescription...' : 'Download Prescription PDF'}
+                            </button>
+                        </div>
                     )}
 
                     {/* Hidden File Input */}
@@ -234,7 +236,7 @@ export const ChatInterface = () => {
                         <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-text-muted hover:text-primary"
+                            className="p-2.5 hover:bg-blue-100 rounded-lg transition-colors text-text-muted hover:text-primary active:bg-blue-200"
                             title="Attach file"
                         >
                             <Paperclip className="w-5 h-5" />
@@ -245,8 +247,8 @@ export const ChatInterface = () => {
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type your symptoms..."
-                            className="flex-1 bg-transparent border-none focus:ring-0 px-2 text-text-main placeholder:text-gray-400 font-body"
+                            placeholder="Type symptoms..."
+                            className="flex-1 bg-transparent border-none focus:ring-0 px-2 text-text-main placeholder:text-gray-400 font-body text-base h-10"
                             disabled={loading}
                         />
 
@@ -254,7 +256,7 @@ export const ChatInterface = () => {
                         <button
                             type="submit"
                             disabled={loading || (!input.trim() && !attachedFile)}
-                            className="bg-primary text-white p-3 rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-blue-500/20"
+                            className="bg-primary text-white p-3 rounded-lg hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-blue-500/20 active:scale-95"
                         >
                             <Send size={18} />
                         </button>

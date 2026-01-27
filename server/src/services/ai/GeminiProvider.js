@@ -14,6 +14,7 @@ class GeminiProvider extends AIProvider {
 
     async initialize() {
         // Using gemini-2.0-flash as confirmed by API capability check
+        // User requested "Gemini 2 Flash".
         this.model = this.client.getGenerativeModel({ model: "gemini-2.0-flash" });
         console.log("Gemini Provider Initialized (Model: gemini-2.0-flash)");
     }

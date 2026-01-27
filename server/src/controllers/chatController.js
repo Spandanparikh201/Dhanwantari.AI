@@ -8,28 +8,43 @@ const crypto = require('crypto');
  */
 
 // System prompt for homeopathy consultation
-const HOMEOPATHY_SYSTEM_PROMPT = `You are Dhanwantari, an AI Homeopathy Assistant based on classical homeopathic principles.
+const HOMEOPATHY_SYSTEM_PROMPT = `You are **Dr. Dhanwantari**, an expert AI Homeopathy Consultant. Your goal is to provide accurate, safe, and classical homeopathic analysis.
 
-Your role is to:
-1. Gather detailed symptom information from the patient
-2. Ask clarifying questions about modalities (what makes symptoms better/worse)
-3. Consider the patient's constitution and mental/emotional state
-4. Suggest appropriate homeopathic remedies with potency and dosage
+### CORE PROTOCOLS:
 
-Guidelines:
-- Always ask about: location, sensation type, modalities, onset, and associated symptoms
-- Reference classical materia medica (Kent, Boericke) when suggesting remedies
-- Provide remedies in format: **Remedy Name** (e.g., Belladonna 30C)
-- Include dosage instructions (e.g., "3 pellets every 4 hours")
-- Always add a disclaimer about consulting a qualified homeopath
+### CORE PROTOCOLS:
 
-IMPORTANT SAFETY RULES:
-- Never diagnose serious conditions
-- Always recommend professional consultation for: chest pain, breathing difficulty, high fever, severe pain, or any emergency
-- Do not prescribe for children under 2 without professional guidance
-- Limit to common acute conditions
+1.  **PHASE 1: CASE TAKING (The Inquiry)**:
+    - **NEVER prescribe in the first turn.**
+    - **Ask targeted follow-up questions.** If a user says "I have a headache", you MUST ask 2-3 specific questions.
+    - **SILENCE ON REMEDIES**: During Phase 1 & 2, you are **FORBIDDEN** from mentioning any remedy names, including "Common remedies". Do not say "Belladonna is good for this". Limit output to Questions only.
+    - **CRITICAL STEP**: After gathering details for one symptom, **ALWAYS ASK**: *"Is there anything else you are experiencing?"* or *"Do you have any other symptoms?"*
 
-Format your responses in clear markdown with proper sections.`;
+2.  **PHASE 2: CONFIRMATION**:
+    - Continue digging until the user explicitly says **"No", "Nothing else", or "That's all"**.
+    - Only proceed to analysis once the user has confirmed they have no more symptoms to report.
+    - **STILL NO REMEDIES**: Do not hint at a diagnosis yet.
+
+3.  **PHASE 3: ANALYSIS & PRESCRIPTION**:
+    - **Only triggered after Phase 2 is complete.**
+    - Base analysis on the *Totality of Symptoms* gathered from all previous turns.
+    - Suggest a remedy when you have at least **3 strong characteristic symptoms**.
+    - **Format**:
+        - **Remedy**: [Name] [Potency] (e.g., *Bryonia Alba 30C*)
+        - **Key Indication**: Why this remedy matches the user's specific symptoms.
+        - **Dosage**: Standard acute dosage (e.g., "3 pellets every 4 hours for 2 days").
+
+4.  **ANTI-HALLUCINATION & ACCURACY**:
+    - **Strict Source Grounding**: Base all analysis ONLY on verified Materia Medica (Kent, Boericke, Allen). Do NOT invent symptoms or remedies.
+    - **Unsure? Ask.** If the user's input is ambiguous, ask for clarification instead of guessing.
+
+### SAFETY & ETHICS (NON-NEGOTIABLE):
+- **Red Flags**: If the user reports Chest Pain, Difficulty Breathing, High Fever (>103°F), Severe Trauma, or Suicidal Thoughts, **STOP** and direct them to Emergency Care immediately.
+- **No Serious Diagnoses**: Do not claim to cure Cancer, Heart Disease, or structural pathologies.
+- **Children/Pregnancy**: Advise professional supervision.
+
+### FORMAT**:
+Use Markdown. Be professional, warm, and clinical.`;
 
 // AI Provider singleton
 let aiProvider = null;
@@ -161,6 +176,39 @@ exports.chat = async (req, res) => {
     }
 };
 
+exports.endConsultation = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        await DatabaseService.initPromise;
+        const pool = DatabaseService.pool;
+
+        // Find active consultation
+        const [rows] = await pool.execute(
+            "SELECT id FROM consultations WHERE patient_id = ? AND status = 'in_progress' ORDER BY created_at DESC LIMIT 1",
+            [userId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'No active consultation found' });
+        }
+
+        const consultationId = rows[0].id;
+
+        // Update status to completed
+        await pool.execute(
+            "UPDATE consultations SET status = 'completed' WHERE id = ?",
+            [consultationId]
+        );
+
+        res.json({ message: 'Consultation ended successfully', consultationId });
+
+    } catch (error) {
+        console.error('End Consultation Error:', error);
+        res.status(500).json({ error: 'Failed to end consultation' });
+    }
+};
+
 /**
  * Fallback response generator when Gemini is unavailable
  */
@@ -190,11 +238,6 @@ What symptoms are you experiencing today?`;
 - Does **pressure** or **rest** help?
 - Did it come on **suddenly** or **gradually**?
 
-Common homeopathic remedies for headaches include:
-- **Belladonna** - Throbbing, sudden onset, worse from light/noise
-- **Bryonia** - Bursting pain, worse from motion
-- **Gelsemium** - Band-like pressure, starts at back of head
-
 *Please provide more details for a personalized recommendation.*`;
     }
 
@@ -205,14 +248,9 @@ Common homeopathic remedies for headaches include:
 - Is the fever **high and sudden** or **gradual**?
 - Are you experiencing **chills** or **sweating**?
 - Are you **thirsty** or **thirstless**?
-- Do you feel **restless** or want to stay **still**?
+- Do you feel **restless** or **want to stay still**?
 
-Common fever remedies:
-- **Aconitum** - Sudden high fever, restlessness, after cold exposure
-- **Belladonna** - High fever, red face, throbbing
-- **Gelsemium** - Flu-like, weak, drowsy, thirstless
-
-*Please share more details for a specific recommendation.*`;
+*Please share more details so I can distinguish the remedy.*`;
     }
 
     if (lowerMessage.includes('anxiety') || lowerMessage.includes('stress') || lowerMessage.includes('worried')) {
@@ -224,12 +262,7 @@ Common fever remedies:
 - Is it worse at **specific times** (night, morning)?
 - Any **physical symptoms** accompanying it? (palpitations, stomach upset)
 
-Common anxiety remedies:
-- **Arsenicum Album** - Health anxiety, restlessness, worse at midnight
-- **Argentum Nitricum** - Anticipatory anxiety, fear of crowds
-- **Gelsemium** - Stage fright, examination fear, weakness
-
-*Please share more for a personalized suggestion.*`;
+*Please share more so I can understand the full picture.*`;
     }
 
     // Default response
