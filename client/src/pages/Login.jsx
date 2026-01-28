@@ -47,9 +47,15 @@ const Login = () => {
                 } else if (response.status === 403) {
                     alert('Your account is inactive. Please contact support.');
                 } else if (response.status === 400) {
-                    alert(data.details?.join('\n') || data.error || 'Please check your input.');
+                    const errorMessage = typeof data.error === 'string'
+                        ? data.error
+                        : data.error?.message || JSON.stringify(data.error);
+                    alert(data.details?.join('\n') || errorMessage || 'Please check your input.');
                 } else {
-                    alert(data.error || 'Login failed. Please try again later.');
+                    const errorMessage = typeof data.error === 'string'
+                        ? data.error
+                        : data.error?.message || JSON.stringify(data.error);
+                    alert(errorMessage || 'Login failed. Please try again later.');
                 }
             }
         } catch (error) {

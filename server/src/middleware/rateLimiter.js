@@ -33,7 +33,7 @@ const aiLimiter = rateLimit({
 // Auth endpoints limiter (prevent brute force)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Limit each IP to 5 login attempts per 15 minutes
+    max: 100, // Increased from 5 to 100 for development
     message: {
         success: false,
         error: {

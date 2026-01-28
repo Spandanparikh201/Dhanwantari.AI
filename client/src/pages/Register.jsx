@@ -47,7 +47,10 @@ const Register = () => {
                 // Navigate to patient profile with reload
                 window.location.href = '/profile';
             } else {
-                alert(data.error || 'Registration failed');
+                const errorMessage = typeof data.error === 'string'
+                    ? data.error
+                    : data.error?.message || JSON.stringify(data.error);
+                alert(errorMessage || 'Registration failed');
             }
         } catch (error) {
             console.error('Registration error:', error);
